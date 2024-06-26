@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Law-Converter</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container1">
+        <h1>Law-Converter</h1>
+    </div>
+    <hr>
+    <div class="container2">
+        <form id="lawForm" method="post" action="/">
+            <div class="form-item">
+                <label>Select Option</label>
+                <select id="code_type" name="code_type">
+                    <option value="ipc to bns">IPC to BNS</option>
+                    <option value="bns to ipc">BNS to IPC</option>
+                </select>
+            </div>
+            <div class="form-item">
+                <label>Section Number</label>
+                <input type="text" id="section" name="section">
+            </div>
+            <div class="form-item">
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+        <div class="form-item">
+            <button type="submit">{{response}}</button>
+        </div>
+    </div>
+    <div id="result">
+        <h2>Conversion Result:</h2>
+        <p id="conversionResult"></p>
+        <h2>BNS Content:</h2>
+        <p id="bnsContent"></p>
+    </div>
+</body>
+</html>
