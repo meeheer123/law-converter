@@ -5,15 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Law-Converter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        .response {
-            white-space: pre-wrap; /* To respect newlines */
-        }
-        .response .first-line {
-            font-size: larger;
-            font-weight: bold;
-        }
-    </style>
+   
 </head>
 <body>
     <div class="container1">
@@ -37,14 +29,27 @@
                 <button type="submit">Submit</button>
             </div>
         </form>
-        <div class="response">
-            <p id="response">{{response}}</p>
+        <div class="response-container">
+            <p class="response" id="response">{{response}}</p>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const responseElement = document.getElementById('response');
             let responseText = responseElement.innerHTML;
+
+            try {
+                // Parse the JSON response
+                const responseJson = JSON.parse(responseText);
+
+                // Convert JSON to a readable string format
+                responseText = JSON.stringify(responseJson, null, 2);
+
+                // Remove the first and last curly braces and process the text
+                responseText = responseText.replace(/^{/, '').replace(/}$/, '').trim();
+            } catch (e) {
+                console.error("Response is not a valid JSON");
+            }
 
             // Replace \r and \n with actual new lines
             responseText = responseText.replace(/\\r/g, '').replace(/\\n/g, '\n');
@@ -61,8 +66,9 @@
             responseText = lines.join('\n');
 
             // Set the processed text back to the response element
-            responseElement.innerHTML = responseText;
+            document.querySelector('.response-container').innerHTML = `<p class="response">${responseText}</p>`;
         });
     </script>
 </body>
 </html>
+

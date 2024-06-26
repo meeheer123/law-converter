@@ -20,12 +20,15 @@ body,html{
 }
 
 form {
-    max-width: 400px;
+    max-width: 600px;
     margin: 0 auto;
 }
 
 .form-item {
     margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
 }
 
 label {
@@ -48,6 +51,7 @@ select{
 }
 
 button {
+ 
     padding: 10px 15px;
     background-color: #4CAF50;
     color: white;
@@ -58,4 +62,23 @@ button {
 
 button:hover {
     background-color: #45a049;
+}
+
+.response-container{
+    display: flex;
+    align-items:center;
+    justify-content: center;
+}
+.response {
+    white-space: pre-wrap;
+    border: #000 solid 1px;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    max-width: 600px;
+    background-color: #fff;
+}
+.response .first-line {
+    font-size: larger;
+    font-weight: 600;
 }
