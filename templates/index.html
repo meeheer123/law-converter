@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Law-Converter</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .response {
+            white-space: pre-wrap; /* To respect newlines */
+        }
+        .response .first-line {
+            font-size: larger;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <div class="container1">
@@ -22,21 +31,38 @@
             </div>
             <div class="form-item">
                 <label>Section Number</label>
-                <input type="text" id="section" name="section">
+                <input type="text" id="section" name="section" required>
             </div>
             <div class="form-item">
                 <button type="submit">Submit</button>
             </div>
         </form>
-        <div class="form-item">
-            <button type="submit">{{response}}</button>
+        <div class="response">
+            <p id="response">{{response}}</p>
         </div>
     </div>
-    <div id="result">
-        <h2>Conversion Result:</h2>
-        <p id="conversionResult"></p>
-        <h2>BNS Content:</h2>
-        <p id="bnsContent"></p>
-    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const responseElement = document.getElementById('response');
+            let responseText = responseElement.innerHTML;
+
+            // Replace \r and \n with actual new lines
+            responseText = responseText.replace(/\\r/g, '').replace(/\\n/g, '\n');
+
+            // Split the text into lines
+            const lines = responseText.split('\n');
+
+            if (lines.length > 0) {
+                // Make the first line larger
+                lines[0] = `<span class="first-line">${lines[0]}</span>`;
+            }
+
+            // Join the lines back together
+            responseText = lines.join('\n');
+
+            // Set the processed text back to the response element
+            responseElement.innerHTML = responseText;
+        });
+    </script>
 </body>
 </html>
