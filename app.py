@@ -62,7 +62,7 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
                     return bns_section, bns_content
             return f"No corresponding BNS section found for IPC section {section_number}.", None
 
-        # main code part
+        # Main code part
         # Find rows where IPC starts with the section number
         corresponding_rows = data[data['IPC'].str.startswith(str(section_number) + '.')]
         if not corresponding_rows.empty:
@@ -92,10 +92,18 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
             bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
             return ipc_section, bns_content
         else:
-            if '(' in section_number:
-                section_number = section_number.split('(')[0]
-                return "hi"
-            return f"No corresponding IPC section found for BNS section {section_number}.", None
+            # Handle cases where the section number might be embedded in the content
+            main_section = section_number.split('(')[0]
+            bns_content_row = data[data['BNS'].str.startswith(main_section)]
+            if not bns_content_row.empty:
+                content = bns_content_row['BNS'].values[0]
+                if f"<para>{section_number}" in content:
+                    corresponding_row = data[data['BNS'].str.startswith(main_section)]
+                    if not corresponding_row.empty:
+                        ipc_section = corresponding_row['IPC'].values[0]
+                        return ipc_section, content
+                return f"No corresponding IPC section found for BNS section {section_number}.", None
+        return f"No corresponding IPC section found for BNS section {section_number}.", None
     else:
         return "Invalid option selected. Please choose either 'ipc to bns' or 'bns to ipc'.", None
 
@@ -116,3 +124,5 @@ def home():
             return jsonify(response)
     else:
         return render_template("index.html")
+
+app.run(debug=True)
