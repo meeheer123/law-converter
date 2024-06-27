@@ -127,5 +127,3 @@ def home():
             return jsonify(response)
     else:
         return render_template("index.html")
-
-app.run(debug=True)
