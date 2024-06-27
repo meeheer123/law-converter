@@ -42,7 +42,7 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
                 bns_content = bns_content_row['Content'].values[0]
             else:
                 bns_content = "No content available for this BNS section."
-            return f"{sec_nums}", bns_content
+            return f"{bns_section}", bns_content
         else:
             # Handle specific cases
             if section_number in ['228A (3)', '376(3)']:
@@ -57,8 +57,6 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
                             bns_content = bns_content_row['Content'].values[0]
                         else:
                             bns_content = "No content available for this BNS section."
-                        if section_number == '376(3)':
-                            return f"[['65'], [65(1)]]", bns_content
                         return f"{bns_section}", bns_content
             return f"No corresponding BNS section found for IPC section {section_number}.", None
 
