@@ -4,33 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Code Conversion Helper</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="../static/style.css">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center">Code Conversion Helper</h1>
-        <form method="post" class="mt-4">
-            <div class="form-group">
+    <div class="main-container">
+        <div class="container1a"></div>
+        <div class="container1">
+            <h1>KNOW THE SECTION</h1>
+        </div>
+    <div class="container2">
+        <form method="post">
+            <div class="form-item">
                 <label for="code_type">Conversion Type:</label>
                 <select id="code_type" name="code_type" class="form-control" required>
                     <option value="">Select Conversion Type</option>
                     <option value="ipc to bns">IPC to BNS</option>
                     <option value="bns to ipc">BNS to IPC</option>
                 </select>
-            </div>
-            <div class="form-group">
                 <label for="section">Section Number:</label>
                 <input type="text" id="section" name="section" class="form-control" placeholder="Enter section number" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Convert</button>
-        </form>
-        <div class="mt-4">
+                <button type="submit" >Convert</button>
+            </form>
+        </div>
+    </div>
+        <div class="response-container">
+            <div class="response">
             {% if response %}
                 {% if response == 'This section has been deleted' %}
                     <div class="alert alert-warning">{{ response }}</div>
                 {% else %}
-                    <h2>Result</h2>
-                    <p><strong>Result:</strong> {{ response.result }}</p>
+                    <p>Result: {{ response.result }}</p>
                     {% if response.bns_content %}
                         <h3>BNS Content</h3>
                         <p>{{ response.bns_content }}</p>
@@ -38,9 +43,8 @@
                 {% endif %}
             {% endif %}
         </div>
+        </div>
     </div>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
 </body>
 </html>
