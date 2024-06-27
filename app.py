@@ -101,7 +101,10 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
                     corresponding_row = data[data['BNS'].str.startswith(main_section)]
                     if not corresponding_row.empty:
                         ipc_section = corresponding_row['IPC'].values[0]
-                        return ipc_section, content
+                        num = content.split('.')[0]
+                        bns_content_row = bns_content_data[bns_content_data['Section'] == int(num)]
+                        bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
+                        return ipc_section, bns_content
                 return f"No corresponding IPC section found for BNS section {section_number}.", None
         return f"No corresponding IPC section found for BNS section {section_number}.", None
     else:
