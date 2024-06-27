@@ -82,6 +82,8 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
             return f"No corresponding BNS section found for IPC section {section_number}.", None
 
     elif code_type.lower() == 'bns to ipc':
+        if (section_number == '351(3)'):
+            section_number = '351(2)'
         corresponding_row = data[data['BNS'].str.startswith(str(section_number))]
         if not corresponding_row.empty:
             ipc_section = corresponding_row['IPC'].values[0]
@@ -90,6 +92,15 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
             bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
             return ipc_section, bns_content
         else:
+            if '(' in section_number:
+                section_number = section_number.split('(')[0]
+                corresponding_row = data[data['BNS'].str.startswith(str(section_number))]
+                if not corresponding_row.empty:
+                    ipc_section = corresponding_row['IPC'].values[0]
+                    sec = re.match(r'\d+', section_number).group(0)
+                    bns_content_row = bns_content_data[bns_content_data['Section'] == int(sec)]
+                    bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
+                    return ipc_section, bns_content
             return f"No corresponding IPC section found for BNS section {section_number}.", None
     else:
         return "Invalid option selected. Please choose either 'ipc to bns' or 'bns to ipc'.", None
@@ -112,4 +123,4 @@ def home():
         return render_template("index.html")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
