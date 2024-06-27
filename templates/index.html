@@ -3,72 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Law-Converter</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-   
+    <title>Code Conversion Helper</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div class="container1">
-        <h1>Law-Converter</h1>
-    </div>
-    <hr>
-    <div class="container2">
-        <form id="lawForm" method="post" action="/">
-            <div class="form-item">
-                <label>Select Option</label>
-                <select id="code_type" name="code_type">
+    <div class="container mt-5">
+        <h1 class="text-center">Code Conversion Helper</h1>
+        <form method="post" class="mt-4">
+            <div class="form-group">
+                <label for="code_type">Conversion Type:</label>
+                <select id="code_type" name="code_type" class="form-control" required>
+                    <option value="">Select Conversion Type</option>
                     <option value="ipc to bns">IPC to BNS</option>
                     <option value="bns to ipc">BNS to IPC</option>
                 </select>
             </div>
-            <div class="form-item">
-                <label>Section Number</label>
-                <input type="text" id="section" name="section" required>
+            <div class="form-group">
+                <label for="section">Section Number:</label>
+                <input type="text" id="section" name="section" class="form-control" placeholder="Enter section number" required>
             </div>
-            <div class="form-item">
-                <button type="submit">Submit</button>
-            </div>
+            <button type="submit" class="btn btn-primary">Convert</button>
         </form>
-        <div class="response-container">
-            <p class="response" id="response">{{response}}</p>
+        <div class="mt-4">
+            {% if response %}
+                {% if response == 'This section has been deleted' %}
+                    <div class="alert alert-warning">{{ response }}</div>
+                {% else %}
+                    <h2>Result</h2>
+                    <p><strong>Result:</strong> {{ response.result }}</p>
+                    {% if response.bns_content %}
+                        <h3>BNS Content</h3>
+                        <p>{{ response.bns_content }}</p>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const responseElement = document.getElementById('response');
-            let responseText = responseElement.innerHTML;
-
-            try {
-                // Parse the JSON response
-                const responseJson = JSON.parse(responseText);
-
-                // Convert JSON to a readable string format
-                responseText = JSON.stringify(responseJson, null, 2);
-
-                // Remove the first and last curly braces and process the text
-                responseText = responseText.replace(/^{/, '').replace(/}$/, '').trim();
-            } catch (e) {
-                console.error("Response is not a valid JSON");
-            }
-
-            // Replace \r and \n with actual new lines
-            responseText = responseText.replace(/\\r/g, '').replace(/\\n/g, '\n');
-
-            // Split the text into lines
-            const lines = responseText.split('\n');
-
-            if (lines.length > 0) {
-                // Make the first line larger
-                lines[0] = `<span class="first-line">${lines[0]}</span>`;
-            }
-
-            // Join the lines back together
-            responseText = lines.join('\n');
-
-            // Set the processed text back to the response element
-            document.querySelector('.response-container').innerHTML = `<p class="response">${responseText}</p>`;
-        });
-    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
-

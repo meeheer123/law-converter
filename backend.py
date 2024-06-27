@@ -20,30 +20,36 @@ special_cases = [
     '234', '235', '256', '257', '489D', '231', '255', '489A'
 ]
 
+def handle_special_cases(section_number, bns_content_data):
+    if section_number in ['246', '248']:
+        bns_content_row = bns_content_data[bns_content_data['Section'] == 246]
+        bns_content = bns_content_row['Content'].values[0]
+        return "178 (5)", bns_content
+    elif section_number in ['237', '238', '239', '240', '241', '250', '251', '254', '258', '260', '489B']:
+        bns_content_row = bns_content_data[bns_content_data['Section'] == 237]
+        bns_content = bns_content_row['Content'].values[0]
+        return "179", bns_content
+    elif section_number in ['242', '243', '252', '253', '259', '489C']:
+        bns_content_row = bns_content_data[bns_content_data['Section'] == 242]
+        bns_content = bns_content_row['Content'].values[0]
+        return "180", bns_content
+    elif section_number in ['233', '234', '235', '256', '257', '489D']:
+        bns_content_row = bns_content_data[bns_content_data['Section'] == 233]
+        bns_content = bns_content_row['Content'].values[0]
+        return "181", bns_content
+    return None, None
+
 def find_corresponding_section(data, bns_content_data, code_type, section_number):
     if code_type.lower() == 'ipc to bns':
-        if section_number in special_cases:
-            if section_number in ['246', '248']:
-                bns_content_row = bns_content_data[bns_content_data['Section'] == 246]
-                bns_content = bns_content_row['Content'].values[0]
-                return f"178 (5)", bns_content
-            elif section_number in ['237', '238', '239', '240', '241', '250', '251', '254', '258', '260', '489B']:
-                bns_content_row = bns_content_data[bns_content_data['Section'] == 237]
-                bns_content = bns_content_row['Content'].values[0]
-                return f"179", bns_content
-            elif section_number in ['242', '243', '252', '253', '259', '489C']:
-                bns_content_row = bns_content_data[bns_content_data['Section'] == 242]
-                bns_content = bns_content_row['Content'].values[0]
-                return f"180", bns_content
-            elif section_number in ['233', '234', '235', '256', '257', '489D']:
-                bns_content_row = bns_content_data[bns_content_data['Section'] == 233]
-                bns_content = bns_content_row['Content'].values[0]
-                return f"181", bns_content
+        special_case_result = handle_special_cases(section_number, bns_content_data)
+        if special_case_result != (None, None):
+            return special_case_result
+
         # Handle specific cases first
         if section_number == '416':
             bns_content_row = bns_content_data[bns_content_data['Section'] == 319]
             bns_content = bns_content_row['Content'].values[0]
-            return f"319(1)", bns_content
+            return "319(1)", bns_content
         if section_number in ['228A (3)', '376(3)']:
             corresponding_row = data[data['IPC'].str.startswith(str(section_number))]
             if not corresponding_row.empty:
@@ -52,11 +58,8 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
                 if sec_match:
                     sec = sec_match.group(0)
                     bns_content_row = bns_content_data[bns_content_data['Section'] == int(sec)]
-                    if not bns_content_row.empty:
-                        bns_content = bns_content_row['Content'].values[0]
-                    else:
-                        bns_content = "No content available for this BNS section."
-                    return f"{bns_section}", bns_content
+                    bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
+                    return bns_section, bns_content
             return f"No corresponding BNS section found for IPC section {section_number}.", None
 
         # main code part
@@ -67,17 +70,14 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
             # Extract the section number
             sec_match = re.match(r'\d+', bns_section)
             if sec_match is None:
-                return f"This section has been deleted"
+                return "This section has been deleted", None
             else:
                 sec = sec_match.group(0)
 
             # Find the corresponding row in bns_content_data
             bns_content_row = bns_content_data[bns_content_data['Section'] == int(sec)]
-            if not bns_content_row.empty:
-                bns_content = bns_content_row['Content'].values[0]
-            else:
-                bns_content = "No content available for this BNS section."
-            return f"{bns_section}", bns_content
+            bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
+            return bns_section, bns_content
         else:
             return f"No corresponding BNS section found for IPC section {section_number}.", None
 
@@ -87,11 +87,8 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
             ipc_section = corresponding_row['IPC'].values[0]
             sec = re.match(r'\d+', section_number).group(0)
             bns_content_row = bns_content_data[bns_content_data['Section'] == int(sec)]
-            if not bns_content_row.empty:
-                bns_content = bns_content_row['Content'].values[0]
-            else:
-                bns_content = "No content available for this BNS section."
-            return f"{ipc_section}", bns_content
+            bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
+            return ipc_section, bns_content
         else:
             return f"No corresponding IPC section found for BNS section {section_number}.", None
     else:
@@ -103,8 +100,8 @@ def home():
         code_type = request.form['code_type'].strip()
         section_number = request.form['section'].strip()
         content = find_corresponding_section(data, bns_content_data, code_type, section_number)
-        if content == 'This section has been deleted':
-            return render_template("index.html", response=content)
+        if content == ("This section has been deleted", None):
+            return render_template("index.html", response=content[0])
         else:
             result, bns_content = content
         response = {'result': result}
