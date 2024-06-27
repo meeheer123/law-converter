@@ -14,9 +14,31 @@ bns_content_data = pd.read_csv(bns_content_path)
 
 # Remove rows with NaN values in the columns we're interested in
 data = data.dropna(subset=['BNS', 'IPC'])
+special_cases = [
+    '178 (5)', '246', '248', '179', '237', '238', '239', '240', '241', '250', '251', '254',
+    '258', '260', '489B', '180', '242', '243', '252', '253', '259', '489C', '181', '233',
+    '234', '235', '256', '257', '489D', '231', '255', '489A'
+]
 
 def find_corresponding_section(data, bns_content_data, code_type, section_number):
     if code_type.lower() == 'ipc to bns':
+        if section_number in special_cases:
+            if section_number in ['246', '248']:
+                bns_content_row = bns_content_data[bns_content_data['Section'] == 246]
+                bns_content = bns_content_row['Content'].values[0]
+                return f"178 (5)", bns_content
+            elif section_number in ['237', '238', '239', '240', '241', '250', '251', '254', '258', '260', '489B']:
+                bns_content_row = bns_content_data[bns_content_data['Section'] == 237]
+                bns_content = bns_content_row['Content'].values[0]
+                return f"179", bns_content
+            elif section_number in ['242', '243', '252', '253', '259', '489C']:
+                bns_content_row = bns_content_data[bns_content_data['Section'] == 242]
+                bns_content = bns_content_row['Content'].values[0]
+                return f"180", bns_content
+            elif section_number in ['233', '234', '235', '256', '257', '489D']:
+                bns_content_row = bns_content_data[bns_content_data['Section'] == 233]
+                bns_content = bns_content_row['Content'].values[0]
+                return f"181", bns_content
         # Handle specific cases first
         if section_number == '416':
             bns_content_row = bns_content_data[bns_content_data['Section'] == 319]
