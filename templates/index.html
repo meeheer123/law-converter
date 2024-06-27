@@ -29,7 +29,8 @@
             </form>
         </div>
         <div class="response-container">
-            <div class="response" id="response">
+            <button id="read-more-button" >Read More</button>
+            <div class="response" id="response" style="display: none;">
                 <!-- Response content will be inserted here -->
             </div>
         </div>
@@ -75,6 +76,8 @@
                 if (data.bns_content) {
                     const formattedContent = data.bns_content.replace(/<para>/g, '\n');
                     document.getElementById('response').innerText = formattedContent;
+                    document.getElementById('response').style.display = 'none';
+                    document.getElementById('read-more-button').style.display = 'block';
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -84,6 +87,19 @@
             document.getElementById('ipc').value = '';
             document.getElementById('bns').value = '';
             document.getElementById('response').innerText = '';
+            document.getElementById('response').style.display = 'none';
+            document.getElementById('read-more-button').style.display = 'none';
+        });
+
+        document.getElementById('read-more-button').addEventListener('click', function() {
+            const responseElement = document.getElementById('response');
+            if (responseElement.style.display === 'none') {
+                responseElement.style.display = 'block';
+                document.getElementById('read-more-button').innerText = 'Read Less';
+            } else {
+                responseElement.style.display = 'none';
+                document.getElementById('read-more-button').innerText = 'Read More';
+            }
         });
     </script>   
 </body>
