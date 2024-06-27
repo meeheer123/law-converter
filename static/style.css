@@ -8,12 +8,33 @@
 body,html{
     background-color: #f3f3f3a2;      
 }
-.container1{
+.container1 {
+    color: #fff;
+    font-size: larger;
     text-align: center;
     padding: 1rem;
-    background-color: #fff;
+    background-color: rgba(248, 247, 216, 0.7);
+    background:linear-gradient(0deg, #2314054b, #3a1f034b),url(background.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 30vh;
+    width: 100%;
+    clip-path: polygon(0 0, 100% 0, 100% 65%, 0 100%); /* Adjust the tilt here */
 }
+.container1 h1{
+    margin: 20px;
+}
+.container1a {
+    position: absolute;
+    background: #654321;
+    height: 28vh;
+    width: 100%;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 65%);/* Adjust the tilt here */
+}
+
 .container2{
+    margin-top: 40px;
+    margin: 20px;
     background-color: #f3f3f3a2;
     justify-content: center;
     padding: 1rem;
@@ -51,13 +72,13 @@ select{
 }
 
 button {
- 
     padding: 10px 15px;
     background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
     border-radius: 5px;
+    margin-top: 10px;
 }
 
 button:hover {
