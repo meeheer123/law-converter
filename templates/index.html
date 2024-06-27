@@ -14,42 +14,77 @@
         <div class="container1">
             <h1>KNOW THE SECTION</h1>
         </div>
-    <div class="container2">
-        <form method="post">
-            <div class="form-item">
-                <!-- <label for="code_type">Conversion Type:</label>
-                <select id="code_type" name="code_type" class="form-control" required>
-                    <option value="">Select Conversion Type</option>
-                    <option value="ipc to bns">IPC to BNS</option>
-                    <option value="bns to ipc">BNS to IPC</option>
-                </select> -->
-                <div class="input1">
-                <label for="section">IPC:</label>
-                <input type="text" id="section" name="section" class="form-control" placeholder="Enter section number" required>
-                <label for="section">BNS:</label>
-                <input type="text" id="section" name="section" class="form-control" placeholder="Enter section number" required>
+        <div class="container2">
+            <form id="conversion-form" method="post">
+                <div class="form-item">
+                    <div class="input1">
+                        <label for="ipc">IPC:</label>
+                        <input type="text" id="ipc" name="ipc" class="form-control" placeholder="Enter section number">
+                        <label for="bns">BNS:</label>
+                        <input type="text" id="bns" name="bns" class="form-control" placeholder="Enter section number">
+                    </div>
+                    <button type="submit">Convert</button>
+                    <button type="reset" id="clear-button">Clear</button>
                 </div>
-                <button type="submit" >Convert</button>
-                <button type="reset">Clear</button>
             </form>
         </div>
-    </div>
         <div class="response-container">
-            <div class="response">
-            {% if response %}
-                {% if response == 'This section has been deleted' %}
-                    <div class="alert alert-warning">{{ response }}</div>
-                {% else %}
-                    <p>Result: {{ response.result }}</p>
-                    {% if response.bns_content %}
-                        <h3>BNS Content</h3>
-                        <p>{{ response.bns_content }}</p>
-                    {% endif %}
-                {% endif %}
-            {% endif %}
-        </div>
+            <div class="response" id="response">
+                <!-- Response content will be inserted here -->
+            </div>
         </div>
     </div>
 
+    <script>
+        document.getElementById('conversion-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const ipcSection = document.getElementById('ipc').value.trim();
+            const bnsSection = document.getElementById('bns').value.trim();
+            let codeType = '';
+
+            if (ipcSection) {
+                codeType = 'ipc to bns';
+            } else if (bnsSection) {
+                codeType = 'bns to ipc';
+            } else {
+                alert('Please enter either IPC or BNS section number.');
+                return;
+            }
+
+            const sectionNumber = ipcSection || bnsSection;
+
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'section': sectionNumber,
+                    'code_type': codeType,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (codeType === 'ipc to bns' && data.result) {
+                    const res = data.result.replace(/<para>/g, '\n');
+                    document.getElementById('bns').value = res;
+                } else if (codeType === 'bns to ipc' && data.result) {
+                    const res = data.result.replace(/<para>/g, '\n');
+                    document.getElementById('ipc').value = res;
+                }
+                if (data.bns_content) {
+                    const formattedContent = data.bns_content.replace(/<para>/g, '\n');
+                    document.getElementById('response').innerText = formattedContent;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        document.getElementById('clear-button').addEventListener('click', function() {
+            document.getElementById('ipc').value = '';
+            document.getElementById('bns').value = '';
+            document.getElementById('response').innerText = '';
+        });
+    </script>   
 </body>
 </html>

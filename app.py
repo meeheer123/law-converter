@@ -94,13 +94,7 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
         else:
             if '(' in section_number:
                 section_number = section_number.split('(')[0]
-                corresponding_row = data[data['BNS'].str.startswith(str(section_number))]
-                if not corresponding_row.empty:
-                    ipc_section = corresponding_row['IPC'].values[0]
-                    sec = re.match(r'\d+', section_number).group(0)
-                    bns_content_row = bns_content_data[bns_content_data['Section'] == int(sec)]
-                    bns_content = bns_content_row['Content'].values[0] if not bns_content_row.empty else "No content available for this BNS section."
-                    return ipc_section, bns_content
+                return "hi"
             return f"No corresponding IPC section found for BNS section {section_number}.", None
     else:
         return "Invalid option selected. Please choose either 'ipc to bns' or 'bns to ipc'.", None
@@ -108,18 +102,17 @@ def find_corresponding_section(data, bns_content_data, code_type, section_number
 @app.route('/', methods=["GET", "POST"])
 def home():
     if request.method == "POST":
-        code_type = request.form['code_type'].strip()
         section_number = request.form['section'].strip()
+        code_type = request.form['code_type']
+        
         content = find_corresponding_section(data, bns_content_data, code_type, section_number)
         if content == ("This section has been deleted", None):
-            return render_template("index.html", response=content[0])
+            return jsonify({'result': "This section has been deleted"})
         else:
             result, bns_content = content
-        response = {'result': result}
-        if bns_content:
-            response['bns_content'] = bns_content
-        return render_template("index.html", response=response)
+            response = {'result': result}
+            if bns_content:
+                response['bns_content'] = bns_content
+            return jsonify(response)
     else:
         return render_template("index.html")
-
-
