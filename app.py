@@ -5,11 +5,11 @@ import re
 app = Flask(__name__)
 
 # Load the main data CSV file
-file_path = 'cleaned_table_data.csv'
+file_path = 'ipc_to_bns.csv'
 data = pd.read_csv(file_path, header=None, names=['BNS', 'IPC'])
 
 # Load the BNS content CSV file
-bns_content_path = 'section_data.csv'
+bns_content_path = 'bns_extra_data.csv'
 bns_content_data = pd.read_csv(bns_content_path)
 
 # Remove rows with NaN values in the columns we're interested in
